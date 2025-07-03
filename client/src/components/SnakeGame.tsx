@@ -4,9 +4,9 @@ import { useAudio } from '../lib/stores/useAudio';
 import GameUI from './GameUI';
 import GameControls from './GameControls';
 
-const CANVAS_WIDTH = 400;
-const CANVAS_HEIGHT = 400;
-const GRID_SIZE = 20;
+const CANVAS_WIDTH = 500;
+const CANVAS_HEIGHT = 500;
+const GRID_SIZE = 25;
 const GRID_WIDTH = CANVAS_WIDTH / GRID_SIZE;
 const GRID_HEIGHT = CANVAS_HEIGHT / GRID_SIZE;
 
@@ -33,7 +33,6 @@ const SnakeGame: React.FC = () => {
     gameState,
     score,
     highScore,
-    moveSnake,
     changeDirection,
     resetGame,
     startGame,
@@ -116,8 +115,8 @@ const SnakeGame: React.FC = () => {
   const gameLoop = useCallback((currentTime: number) => {
     const deltaTime = currentTime - lastTimeRef.current;
     
-    // Update game at 8 FPS for classic Snake feel
-    if (deltaTime >= 125) {
+    // Update game at 5 FPS for slower, more comfortable gameplay
+    if (deltaTime >= 200) {
       if (gameState === 'playing') {
         const result = updateGame();
         
@@ -237,10 +236,10 @@ const SnakeGame: React.FC = () => {
   }, [handleKeyPress, handleTouchStart, gameLoop]);
 
   return (
-    <div className="game-container flex flex-col items-center space-y-6 p-6 bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl">
+    <div className="game-container flex flex-col items-center space-y-4 p-4 bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl max-w-2xl mx-auto">
       {/* Game Title */}
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-white mb-2">Modern Snake</h1>
+        <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Modern Snake</h1>
         <p className="text-white/80 text-sm">A classic game with modern design</p>
       </div>
 
@@ -250,8 +249,12 @@ const SnakeGame: React.FC = () => {
           ref={canvasRef}
           width={CANVAS_WIDTH}
           height={CANVAS_HEIGHT}
-          className="border-2 border-white/20 rounded-lg shadow-lg bg-gray-900"
-          style={{ imageRendering: 'pixelated' }}
+          className="border-2 border-white/20 rounded-lg shadow-lg bg-gray-900 max-w-full h-auto"
+          style={{ 
+            imageRendering: 'pixelated',
+            maxWidth: '90vw',
+            maxHeight: '60vh'
+          }}
         />
         
         {/* Game UI Overlay */}
