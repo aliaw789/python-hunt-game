@@ -54,8 +54,8 @@ const GameControls: React.FC<GameControlsProps> = ({ gameState }) => {
         </div>
         
         <div className="mt-4 text-xs opacity-60">
-          <p>Eat the golden food to grow and score points!</p>
-          <p>Avoid hitting walls or yourself.</p>
+          <p>Hunt mice to grow your python and score points!</p>
+          <p>Avoid hitting walls or your own body.</p>
         </div>
       </div>
     </div>

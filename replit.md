@@ -94,6 +94,8 @@ This is a modern web-based Snake game built with React and TypeScript, featuring
 
 ## Changelog
 - July 03, 2025. Initial setup
+- July 03, 2025. Updated game design to realistic python theme with detailed graphics
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
+Game design: Realistic python appearance with natural forest environment

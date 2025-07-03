@@ -43,12 +43,15 @@ const SnakeGame: React.FC = () => {
 
   // Draw game elements
   const draw = useCallback((ctx: CanvasRenderingContext2D) => {
-    // Clear canvas with background color
-    ctx.fillStyle = COLORS.background;
+    // Clear canvas with natural background
+    const gradient = ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT);
+    gradient.addColorStop(0, '#2d4a2b'); // Dark forest green
+    gradient.addColorStop(1, '#1a2e1a'); // Darker forest green
+    ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-    // Draw grid lines for better visual feedback
-    ctx.strokeStyle = COLORS.grid;
+    // Draw subtle grid lines like forest floor pattern
+    ctx.strokeStyle = 'rgba(79, 106, 76, 0.3)';
     ctx.lineWidth = 1;
     for (let x = 0; x <= CANVAS_WIDTH; x += GRID_SIZE) {
       ctx.beginPath();
@@ -63,51 +66,145 @@ const SnakeGame: React.FC = () => {
       ctx.stroke();
     }
 
-    // Draw snake
+    // Draw snake with python-like appearance
     snake.forEach((segment, index) => {
       const isHead = index === 0;
-      ctx.fillStyle = isHead ? COLORS.snakeHead : COLORS.snake;
-      
-      // Add rounded corners for modern look
       const x = segment.x * GRID_SIZE;
       const y = segment.y * GRID_SIZE;
-      const radius = 4;
+      const centerX = x + GRID_SIZE / 2;
+      const centerY = y + GRID_SIZE / 2;
+      const radius = (GRID_SIZE - 2) / 2;
       
-      ctx.beginPath();
-      ctx.roundRect(x + 1, y + 1, GRID_SIZE - 2, GRID_SIZE - 2, radius);
-      ctx.fill();
-      
-      // Add subtle border for the head
       if (isHead) {
-        ctx.strokeStyle = COLORS.border;
-        ctx.lineWidth = 2;
+        // Draw python head - more elongated and detailed
+        ctx.fillStyle = '#4a5c2a'; // Dark olive green
+        ctx.beginPath();
+        ctx.ellipse(centerX, centerY, radius + 2, radius - 1, 0, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Head pattern - diamond shape
+        ctx.fillStyle = '#6b7c3a';
+        ctx.beginPath();
+        ctx.ellipse(centerX, centerY, radius - 2, radius - 4, 0, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Eyes
+        const eyeOffset = radius * 0.6;
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.arc(centerX - eyeOffset/2, centerY - eyeOffset/2, 2, 0, 2 * Math.PI);
+        ctx.arc(centerX + eyeOffset/2, centerY - eyeOffset/2, 2, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Eye highlights
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(centerX - eyeOffset/2 + 1, centerY - eyeOffset/2 - 1, 1, 0, 2 * Math.PI);
+        ctx.arc(centerX + eyeOffset/2 + 1, centerY - eyeOffset/2 - 1, 1, 0, 2 * Math.PI);
+        ctx.fill();
+        
+      } else {
+        // Draw python body segments with realistic pattern
+        const bodyRadius = radius * (0.9 + Math.sin(index * 0.5) * 0.1); // Slight variation
+        
+        // Base body color - olive green
+        ctx.fillStyle = '#556b2f';
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, bodyRadius, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Python pattern - darker diamond shapes
+        ctx.fillStyle = '#3d4f1f';
+        ctx.beginPath();
+        ctx.ellipse(centerX, centerY, bodyRadius * 0.7, bodyRadius * 0.4, 
+                   (index * 0.3) % (Math.PI * 2), 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Lighter center stripe
+        ctx.fillStyle = '#7a8f4a';
+        ctx.beginPath();
+        ctx.ellipse(centerX, centerY, bodyRadius * 0.4, bodyRadius * 0.2, 
+                   (index * 0.3) % (Math.PI * 2), 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Scale texture - small lines
+        ctx.strokeStyle = '#2a3318';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([2, 2]);
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, bodyRadius * 0.8, 0, 2 * Math.PI);
         ctx.stroke();
+        ctx.setLineDash([]);
       }
+      
+      // Add subtle shadow for depth
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+      ctx.shadowBlur = 2;
+      ctx.shadowOffsetX = 1;
+      ctx.shadowOffsetY = 1;
+      
+      // Reset shadow
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
     });
 
-    // Draw food with pulsing effect
+    // Draw food as a small mouse/prey animal
     if (food) {
       const time = Date.now() * 0.005;
-      const pulse = Math.sin(time) * 0.1 + 1;
-      const size = (GRID_SIZE - 4) * pulse;
-      const offset = (GRID_SIZE - size) / 2;
+      const pulse = Math.sin(time) * 0.05 + 1;
+      const x = food.x * GRID_SIZE;
+      const y = food.y * GRID_SIZE;
+      const centerX = x + GRID_SIZE / 2;
+      const centerY = y + GRID_SIZE / 2;
+      const bodyRadius = (GRID_SIZE / 3) * pulse;
       
-      ctx.fillStyle = COLORS.food;
+      // Mouse body - brown/tan color
+      ctx.fillStyle = '#8b6f47';
       ctx.beginPath();
-      ctx.roundRect(
-        food.x * GRID_SIZE + offset,
-        food.y * GRID_SIZE + offset,
-        size,
-        size,
-        size / 4
-      );
+      ctx.ellipse(centerX, centerY + 2, bodyRadius * 1.2, bodyRadius * 0.8, 0, 0, 2 * Math.PI);
       ctx.fill();
       
-      // Add glow effect
-      ctx.shadowColor = COLORS.food;
-      ctx.shadowBlur = 10;
+      // Mouse head
+      ctx.fillStyle = '#a0825a';
+      ctx.beginPath();
+      ctx.arc(centerX, centerY - 2, bodyRadius * 0.7, 0, 2 * Math.PI);
       ctx.fill();
+      
+      // Ears
+      ctx.fillStyle = '#6b4e32';
+      ctx.beginPath();
+      ctx.arc(centerX - 3, centerY - 5, 2, 0, 2 * Math.PI);
+      ctx.arc(centerX + 3, centerY - 5, 2, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      // Eyes
+      ctx.fillStyle = '#000000';
+      ctx.beginPath();
+      ctx.arc(centerX - 2, centerY - 3, 1, 0, 2 * Math.PI);
+      ctx.arc(centerX + 2, centerY - 3, 1, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      // Tail
+      ctx.strokeStyle = '#8b6f47';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY + 6);
+      ctx.quadraticCurveTo(centerX + 8, centerY + 8, centerX + 6, centerY + 12);
+      ctx.stroke();
+      
+      // Subtle glow effect
+      ctx.shadowColor = 'rgba(139, 111, 71, 0.3)';
+      ctx.shadowBlur = 5;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      
+      // Reset shadow
+      ctx.shadowColor = 'transparent';
       ctx.shadowBlur = 0;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
     }
   }, [snake, food]);
 
@@ -239,8 +336,8 @@ const SnakeGame: React.FC = () => {
     <div className="game-container flex flex-col items-center space-y-4 p-4 bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl max-w-2xl mx-auto">
       {/* Game Title */}
       <div className="text-center">
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Modern Snake</h1>
-        <p className="text-white/80 text-sm">A classic game with modern design</p>
+        <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Python Hunt</h1>
+        <p className="text-white/80 text-sm">Guide the python through the forest to catch prey</p>
       </div>
 
       {/* Game Canvas */}
