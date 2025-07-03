@@ -20,14 +20,14 @@ const GameUI: React.FC<GameUIProps> = ({
   return (
     <>
       {/* Score Display */}
-      <div className="absolute top-2 left-2 right-2 flex justify-between items-center text-white font-mono">
-        <div className="bg-black/50 px-3 py-1 rounded-md backdrop-blur-sm">
+      <div className="absolute -top-12 left-0 right-0 flex justify-between items-center text-white font-mono">
+        <div className="bg-black/70 px-3 py-2 rounded-md backdrop-blur-sm border border-white/20">
           <span className="text-sm opacity-80">Score: </span>
           <span className="text-lg font-bold">{score}</span>
         </div>
         
         {highScore > 0 && (
-          <div className="bg-black/50 px-3 py-1 rounded-md backdrop-blur-sm flex items-center gap-1">
+          <div className="bg-black/70 px-3 py-2 rounded-md backdrop-blur-sm border border-white/20 flex items-center gap-1">
             <Trophy className="w-4 h-4 text-yellow-400" />
             <span className="text-sm opacity-80">Best: </span>
             <span className="text-lg font-bold text-yellow-400">{highScore}</span>

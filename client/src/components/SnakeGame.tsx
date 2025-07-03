@@ -244,7 +244,7 @@ const SnakeGame: React.FC = () => {
       </div>
 
       {/* Game Canvas */}
-      <div className="relative">
+      <div className="relative mt-12">
         <canvas
           ref={canvasRef}
           width={CANVAS_WIDTH}
